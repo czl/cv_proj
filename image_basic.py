@@ -23,12 +23,9 @@ cp = img[0:0, 0:0]
 delta = [-1,-1]
 
 def handle(event,x,y,flags,param):
-    print 'x:%d -- y:%d'%(x,y)
     global select,a,cp,delta
-    print flags
-    print event
     bgr = img[y,x] ##NOTE!!! img[y,x] selection is backwards!!
-##    print bgr[0],bgr[1],bgr[2]
+    
     #start select
     if not(select) and flags == (cv2.EVENT_FLAG_CTRLKEY + cv2.EVENT_FLAG_LBUTTON):
         print "start selecting"
@@ -36,16 +33,27 @@ def handle(event,x,y,flags,param):
         select = True
     #done selecting
     elif select and flags == cv2.EVENT_FLAG_CTRLKEY and event == cv2.EVENT_LBUTTONUP:
-        print "correct"
+        print "done selecting"
         select = False
         #draw white rectangle around selection
-        cp = img[a[0]:x, a[1]:y]
-        delta = [x-a[0],y-a[1]]
+        delta = [abs(x-a[0]),abs(y-a[1])]
+        if a[0] < x:
+            if a[1] < y:
+                cp = img[a[1]:y, a[0]:x]
+            else:
+                cp = img[y:a[1], a[0]:x]
+        else:
+            if a[1] < y:
+                cp = img[a[1]:y, x:a[0]]
+            else:
+                cp = img[y:a[1], x:a[0]]
         print "delta: %d,%d" %(delta[0],delta[1])
         cv2.rectangle(img,(a[0],a[1]),(x,y), (255,255,255),2)
         cv2.imshow('image',img)
     elif flags == cv2.EVENT_FLAG_ALTKEY and event == cv2.EVENT_LBUTTONUP:
         print "delta: %d,%d" %(delta[0],delta[1])
+        img[y:(y+delta[1]), x:(x+delta[0])] = cp
+        cv2.imshow('image',img)
     
         
 
