@@ -60,6 +60,19 @@ def handle(event,x,y,flags,param):
 cv2.setMouseCallback('image',handle)
 
 while True:
-    if cv2.waitKey(1) & 0xFF == ord('q'):
+    key = cv2.waitKey(2) & 0xFF
+    if key == ord('q'):
         break
+    elif key == ord('r'):
+        img[:,:,2] = 0 #setting red in whole pix to zero
+        cv2.imshow('image',img)
+    elif key == ord('g'):
+        img[:,:,1] = 0
+        cv2.imshow('image',img)
+    elif key == ord('b'):
+        img[:,:,0] = 0
+        cv2.imshow('image',img)
+    elif key == ord('1'):
+        img = cv2.imread('beach.jpg')
+        cv2.imshow('image',img)
 cv2.destroyAllWindows()
